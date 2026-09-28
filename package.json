@@ -1,13 +1,16 @@
 {
-  "name": "statintel-ai",
+  "name": "statsaksham",
   "version": "1.0.0",
-  "description": "StatIntel AI - AI-Powered Skill Intelligence & Personalized Learning Platform",
+  "description": "StatSaksham - AI-Powered Skill Intelligence & Personalized Learning Platform",
   "private": true,
+  "main": "server.js",
   "workspaces": [
     "frontend",
     "backend"
   ],
   "scripts": {
+    "build": "npm run build --workspace=backend && npm run build --workspace=frontend",
+    "start": "node server.js",
     "dev": "concurrently \"npm run dev --workspace=backend\" \"npm run dev --workspace=frontend\"",
     "install:all": "npm install && npm install --workspace=frontend && npm install --workspace=backend",
     "db:migrate": "npm run db:migrate --workspace=backend",
