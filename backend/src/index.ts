@@ -33,12 +33,12 @@ const PORT = process.env.PORT || 3001;
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 
 // CORS
-const corsOrigin = process.env.CORS_ORIGIN;
+// CORS - Allow any origin (Vercel, local dev, custom domains) with credentials
 app.use(cors({
-  origin: corsOrigin && corsOrigin !== '*' 
-    ? corsOrigin.split(',').map(s => s.trim()) 
-    : true,
+  origin: (origin, callback) => callback(null, origin || true),
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
 
 // Body parsing

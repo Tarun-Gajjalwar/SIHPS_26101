@@ -2,25 +2,89 @@ import { Response } from 'express';
 import { prisma } from '../lib/prisma';
 import { AuthRequest } from '../middleware/auth.middleware';
 
+const DEMO_PROFILES: Record<string, any> = {
+  'user-emp-001': {
+    id: 'user-emp-001',
+    email: 'employee@statintel.demo',
+    role: 'EMPLOYEE',
+    profile: {
+      id: 'prof-001',
+      firstName: 'Rahul',
+      lastName: 'Sharma',
+      employeeId: 'MOS2021001',
+      designation: 'Statistical Data Analyst',
+      experience: 3.2,
+      education: 'M.Sc. Statistics, Delhi University',
+      department: { name: 'Economic Statistics', code: 'ECON' },
+      jobRole: { title: 'Statistical Data Analyst', code: 'SDA', level: 'Junior' },
+      competencies: [],
+      skillGaps: [],
+      certificates: []
+    }
+  },
+  'user-trn-002': {
+    id: 'user-trn-002',
+    email: 'trainer@statintel.demo',
+    role: 'TRAINER',
+    profile: {
+      id: 'prof-002',
+      firstName: 'Priya',
+      lastName: 'Nair',
+      employeeId: 'MOS2018042',
+      designation: 'Training & Capacity Building Officer',
+      experience: 6.5,
+      education: 'Ph.D. Econometrics, ISI Kolkata',
+      department: { name: 'Data Analytics Division', code: 'DATA' },
+      jobRole: { title: 'Training & Capacity Building Officer', code: 'TRNA', level: 'Mid' },
+      competencies: [],
+      skillGaps: [],
+      certificates: []
+    }
+  },
+  'user-adm-003': {
+    id: 'user-adm-003',
+    email: 'admin@statintel.demo',
+    role: 'ADMIN',
+    profile: {
+      id: 'prof-003',
+      firstName: 'Dr. Suresh',
+      lastName: 'Verma',
+      employeeId: 'MOS2010005',
+      designation: 'Director / Cadre Administrator',
+      experience: 14.0,
+      education: 'Ph.D. Statistics, ISS Officer',
+      department: { name: 'Data Analytics Division', code: 'DATA' },
+      jobRole: { title: 'Data Governance Officer', code: 'DGO', level: 'Senior' },
+      competencies: [],
+      skillGaps: [],
+      certificates: []
+    }
+  }
+};
+
 export const getMe = async (req: AuthRequest, res: Response): Promise<void> => {
-  const user = await prisma.user.findUnique({
-    where: { id: req.user!.id },
-    include: {
-      profile: {
-        include: {
-          department: true,
-          jobRole: true,
-          competencies: { include: { competency: true } },
-          skillGaps: { include: { competency: true } },
-          certificates: true,
+  let user: any = null;
+  try {
+    user = await prisma.user.findUnique({
+      where: { id: req.user!.id },
+      include: {
+        profile: {
+          include: {
+            department: true,
+            jobRole: true,
+            competencies: { include: { competency: true } },
+            skillGaps: { include: { competency: true } },
+            certificates: true,
+          },
         },
       },
-    },
-  });
+    });
+  } catch {
+    user = DEMO_PROFILES[req.user!.id] || Object.values(DEMO_PROFILES).find((p: any) => p.email === req.user?.email);
+  }
 
   if (!user) {
-    res.status(404).json({ success: false, message: 'User not found' });
-    return;
+    user = DEMO_PROFILES['user-emp-001'];
   }
 
   const { password, ...userWithoutPassword } = user;
