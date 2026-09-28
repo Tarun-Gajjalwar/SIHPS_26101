@@ -34,6 +34,6 @@ export const materialRouter = Router();
 
 materialRouter.use(authenticate);
 materialRouter.get('/', materialController.getAllMaterials);
-materialRouter.post('/upload', authorize('TRAINER', 'ADMIN'), upload.single('file'), materialController.uploadMaterial);
+materialRouter.post('/upload', authorize('TRAINER', 'ADMIN'), upload.single('file') as any, materialController.uploadMaterial as any);
 materialRouter.get('/:id', materialController.getMaterialById);
 materialRouter.post('/:id/generate-questions', authorize('TRAINER', 'ADMIN'), materialController.generateQuestions);
